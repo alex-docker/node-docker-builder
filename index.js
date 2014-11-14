@@ -1,7 +1,8 @@
 var Joi = require('joi'),
     Hapi = require('hapi'),
     exec = require('child_process').exec,
-    path = require('path');
+    path = require('path'),
+    fs = require('fs');
 
 
 var GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -17,13 +18,13 @@ server.route({
   method: 'POST',
   path: '/docker-build',
   handler: function (request, reply) {
+    // console.log(body);
+
     var body = request.payload,
         repository_url = body.repository.ssh_url,
         repository_name = body.repository.name,
         cwd = process.cwd();
-    server.log(body);
-    server.log(request);
-    server.log(body.hook.config.secret);
+
     // if (body.hook.config.secret != GITHUB_TOKEN)
     var timecode = +(new Date());
 
@@ -32,22 +33,22 @@ server.route({
     var cleanup = function (cb) {
       fs.rmdir(workDir, cb);
     }
-    exec('git clone ' + repository + ' '+workDir, function (error, stdout, stderr) {
-      if (err) {
+    exec('git clone ' + repository_url + ' '+workDir, function (error, stdout, stderr) {
+      if (error) {
         console.error('Failed to clone repository');
-        console.error(err);
+        console.error(error);
         cleanup();
       } else {
         exec('cd ' + workDir + ';  docker build -t '+DOCKER_USER+'/'+repository_name+' .', function (error, stdout, stderr) {
-          if (err) {
+          if (error) {
             console.error('Failed to build docker image');
-            console.error(err);
+            console.error(error);
             cleanup();
           } else {
             exec('cd ' + workDir + ';  docker push', function (error, stdout, stderr) {
-              if (err) {
+              if (error) {
                 console.error('Failed to publish docker image');
-                console.error(err);
+                console.error(error);
                 cleanup();
               } else {
                 exec('cd ' + workDir + ';  docker push', function (err, stdout, stderr) {
@@ -65,13 +66,13 @@ server.route({
 });
 
 
-server.route({
-  method: '*',
-  path: '/*',
-  handler: function(request, reply) {
-     reply('The page was not found').code(404);
-  }
-});
+// server.route({
+//   method: '*',
+//   path: '/*',
+//   handler: function(request, reply) {
+//      reply('The page was not found').code(404);
+//   }
+// });
 
 // Start the server
 server.start();
