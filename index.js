@@ -60,17 +60,7 @@ server.route({
     });
     reply('Build Away');
   },
-  config: {
-    validate: {
-      payload: {
-        hook: {
-          config: {
-            secret: Joi.string()
-          }
-        }
-      }
-    }
-  }
+  config: {}
 });
 
 
