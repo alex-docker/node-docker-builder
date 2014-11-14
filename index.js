@@ -26,7 +26,7 @@ server.route({
     // if (body.hook.config.secret != GITHUB_TOKEN)
     var timecode = +(new Date());
 
-    var workDir = path.join(cwd, 'tmp', timecode);
+    var workDir = path.join(cwd, 'tmp', ''+timecode);
 
     var cleanup = function (cb) {
       fs.rmdir(workDir, cb);
