@@ -56,8 +56,6 @@ server.route({
       }
     });
     reply('Build Away');
-
-
   },
   config: {
     validate: {
@@ -70,14 +68,14 @@ server.route({
       }
     }
   }
-
 });
+
+
 server.route({
-    method: '*',
-    path: '/*',
-    handler: function(request, reply) {
-       reply('The page was not found').code(404);
-    }
+  method: '*',
+  path: '/*',
+  handler: function(request, reply) {
+     reply('The page was not found').code(404);
   }
 });
 
