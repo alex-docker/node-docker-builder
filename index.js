@@ -33,7 +33,10 @@ server.route({
     var cleanup = function (cb) {
       exec('rm -Rf '+workDir, cb);
     }
+
     var cmd = './builder '+key+' '+repository_url+' "'+DOCKER_USER+'/'+repository_name+'" ';
+    console.log(cmd);
+
     exec(cmd, function (error,stdout,stderr)  {
       if (error) {
         console.error('Failed to publish docker image');
