@@ -28,7 +28,7 @@ server.route({
     // if (body.hook.config.secret != GITHUB_TOKEN)
     var key = body.hook_id;
 
-    var workDir = path.join(cwd, 'tmp', key);
+    var workDir = path.join(cwd, 'tmp', ''+key);
 
     var cleanup = function (cb) {
       exec('rm -Rf '+workDir, cb);
