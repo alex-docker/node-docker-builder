@@ -60,24 +60,25 @@ server.route({
 
     },
     config: {
-        validate: {
-            payload: {
-                hook: {
-                  config: {
-                    secret: Joi.any().valid(GITHUB_TOKEN)
-                  }
-                }
-              }
+      validate: {
+        payload: {
+          hook: {
+            config: {
+              secret: Joi.any().valid(GITHUB_TOKEN)
             }
+          }
         }
-    },
-    {
-      method: '*',
-      path: '/*',
-      handler: function(request, reply) {
-         reply('The page was not found').code(404);
       }
     }
+
+  },
+  {
+    method: '*',
+    path: '/*',
+    handler: function(request, reply) {
+       reply('The page was not found').code(404);
+    }
+  }
 });
 
 // Start the server
