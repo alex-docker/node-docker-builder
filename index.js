@@ -31,8 +31,9 @@ server.route({
     var workDir = path.join(cwd, 'tmp', ''+timecode);
 
     var cleanup = function (cb) {
-      fs.rmdir(workDir, cb);
+      exec('rm -Rf '+workDir, cb);
     }
+
     exec('git clone ' + repository_url + ' '+workDir, function (error, stdout, stderr) {
       if (error) {
         console.error('Failed to clone repository');
