@@ -26,40 +26,20 @@ server.route({
         cwd = process.cwd();
 
     // if (body.hook.config.secret != GITHUB_TOKEN)
-    var timecode = +(new Date());
+    var key = body.hook_id;
 
     var workDir = path.join(cwd, 'tmp', ''+timecode);
 
     var cleanup = function (cb) {
       exec('rm -Rf '+workDir, cb);
     }
-
-    exec('git clone ' + repository_url + ' '+workDir, function (error, stdout, stderr) {
+    var cmd = './builder '+key+' '+repository_url+' "'+DOCKER_USER+'/'+repository_name+'" ';
+    exec(cmd, function (error,stdout,stderr)  {
       if (error) {
-        console.error('Failed to clone repository');
+        console.error('Failed to publish docker image');
         console.error(error);
-        cleanup();
-      } else {
-        exec('cd ' + workDir + ';  docker build -t '+DOCKER_USER+'/'+repository_name+' .', function (error, stdout, stderr) {
-          if (error) {
-            console.error('Failed to build docker image');
-            console.error(error);
-            cleanup();
-          } else {
-            exec('cd ' + workDir + ';  docker push', function (error, stdout, stderr) {
-              if (error) {
-                console.error('Failed to publish docker image');
-                console.error(error);
-                cleanup();
-              } else {
-                exec('cd ' + workDir + ';  docker push', function (err, stdout, stderr) {
-                  cleanup();
-                });
-              }
-            });
-          }
-        });
       }
+      cleanup();
     });
     reply('Build Away');
   },
