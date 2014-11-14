@@ -21,8 +21,9 @@ server.route({
         repository_url = body.repository.ssh_url,
         repository_name = body.repository.name,
         cwd = process.cwd();
-
-    console.log(body.hook.config.secret);
+    server.log(body);
+    server.log(request);
+    server.log(body.hook.config.secret);
     // if (body.hook.config.secret != GITHUB_TOKEN)
     var timecode = +(new Date());
 
