@@ -7,4 +7,5 @@ cd $TARGET
 cp ~/.ssh/id_rsa ./
 docker build -t $3 .
 docker push
+rm -f ./id_rsa
 
