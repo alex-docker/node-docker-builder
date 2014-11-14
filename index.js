@@ -1,7 +1,7 @@
-var Joi = require('joi');
-var Hapi = require('hapi');
-var exec = require('child_process').exec,
-var path = require('path');
+var Joi = require('joi'),
+    Hapi = require('hapi'),
+    exec = require('child_process').exec,
+    path = require('path');
 
 
 var GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -30,19 +30,19 @@ server.route({
       }
       exec('git clone ' + repository + ' '+workDir, function (error, stdout, stderr) {
         if (err) {
-          console.error("Failed to clone repository");
+          console.error('Failed to clone repository');
           console.error(err);
           cleanup();
         } else {
           exec('cd ' + workDir + ';  docker build -t '+DOCKER_USER+'/'+repository_name+' .', function (error, stdout, stderr) {
             if (err) {
-              console.error("Failed to build docker image");
+              console.error('Failed to build docker image');
               console.error(err);
               cleanup();
             } else {
               exec('cd ' + workDir + ';  docker push', function (error, stdout, stderr) {
                 if (err) {
-                  console.error("Failed to publish docker image");
+                  console.error('Failed to publish docker image');
                   console.error(err);
                   cleanup();
                 } else {
