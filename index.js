@@ -14,65 +14,65 @@ var server = new Hapi.Server('0.0.0.0', process.env.port || 8080);
 
 // Add the route
 server.route({
-    method: 'POST',
-    path: '/docker-build',
-    handler: function (request, reply) {
-      var body = request.payload,
-          repository_url = body.repository.ssh_url,
-          repository_name = body.repository.name,
-          cwd = process.cwd();
-      var timecode = +(new Date());
+  method: 'POST',
+  path: '/docker-build',
+  handler: function (request, reply) {
+    var body = request.payload,
+        repository_url = body.repository.ssh_url,
+        repository_name = body.repository.name,
+        cwd = process.cwd();
+    var timecode = +(new Date());
 
-      var workDir = path.join(cwd, 'tmp', timecode);
+    var workDir = path.join(cwd, 'tmp', timecode);
 
-      var cleanup = function (cb) {
-        fs.rmdir(workDir, cb);
-      }
-      exec('git clone ' + repository + ' '+workDir, function (error, stdout, stderr) {
-        if (err) {
-          console.error('Failed to clone repository');
-          console.error(err);
-          cleanup();
-        } else {
-          exec('cd ' + workDir + ';  docker build -t '+DOCKER_USER+'/'+repository_name+' .', function (error, stdout, stderr) {
-            if (err) {
-              console.error('Failed to build docker image');
-              console.error(err);
-              cleanup();
-            } else {
-              exec('cd ' + workDir + ';  docker push', function (error, stdout, stderr) {
-                if (err) {
-                  console.error('Failed to publish docker image');
-                  console.error(err);
+    var cleanup = function (cb) {
+      fs.rmdir(workDir, cb);
+    }
+    exec('git clone ' + repository + ' '+workDir, function (error, stdout, stderr) {
+      if (err) {
+        console.error('Failed to clone repository');
+        console.error(err);
+        cleanup();
+      } else {
+        exec('cd ' + workDir + ';  docker build -t '+DOCKER_USER+'/'+repository_name+' .', function (error, stdout, stderr) {
+          if (err) {
+            console.error('Failed to build docker image');
+            console.error(err);
+            cleanup();
+          } else {
+            exec('cd ' + workDir + ';  docker push', function (error, stdout, stderr) {
+              if (err) {
+                console.error('Failed to publish docker image');
+                console.error(err);
+                cleanup();
+              } else {
+                exec('cd ' + workDir + ';  docker push', function (err, stdout, stderr) {
                   cleanup();
-                } else {
-                  exec('cd ' + workDir + ';  docker push', function (err, stdout, stderr) {
-                    cleanup();
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
-      reply('Build Away');
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+    reply('Build Away');
 
 
-    },
-    config: {
-      validate: {
-        payload: {
-          hook: {
-            config: {
-              secret: Joi.any().valid(GITHUB_TOKEN)
-            }
+  },
+  config: {
+    validate: {
+      payload: {
+        hook: {
+          config: {
+            secret: Joi.any().valid(GITHUB_TOKEN)
           }
         }
       }
     }
+  }
 
-  },
-  {
+});
+server.route({
     method: '*',
     path: '/*',
     handler: function(request, reply) {
