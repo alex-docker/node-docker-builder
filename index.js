@@ -22,7 +22,7 @@ server.route({
 
     var body = request.payload,
         repository_url = body.repository.ssh_url,
-        repository_name = body.repository.name,
+        repository_name = body.repository.name.toLowerCase(),
         cwd = process.cwd();
 
     // if (body.hook.config.secret != GITHUB_TOKEN)
