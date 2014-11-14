@@ -1,0 +1,15 @@
+{
+  "name": "docker-builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chris Williams <chris@iterativedesigns.com>",
+  "license": "MIT",
+  "dependencies": {
+    "hapi": "^7.5.2",
+    "joi": "^4.8.1"
+  }
+}
